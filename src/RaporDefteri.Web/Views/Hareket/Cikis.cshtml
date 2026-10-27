@@ -1,0 +1,45 @@
+@model DepartInput
+@{ ViewData["Title"] = "Kurum dışı çıkış"; }
+<h1>Kurum dışı çıkış</h1>
+<partial name="_Errors" />
+<form method="post" class="card">
+    <input type="hidden" name="IdempotencyKey" value="@Model.IdempotencyKey" />
+    <label for="person">Hükümlü/tutuklu ara</label>
+    <input id="person" data-person-search="#person-results" data-person-list="#selected" placeholder="Ad, sicil veya koğuş" />
+    <ul id="person-results" class="suggestions"></ul>
+    <ul id="selected" class="chips">
+        @foreach (var person in Model.Selected)
+        {
+            <li>@person.FileNumber — @person.FullName — @person.Ward — @person.Presence<input type="hidden" name="InmateIds" value="@person.Id" /></li>
+        }
+    </ul>
+    <label for="Kind">Hareket türü</label>
+    <select id="Kind" name="Kind">
+        <option value="Hospital" selected="@(Model.Kind == TemporaryMovementKind.Hospital)">Hastane</option>
+        <option value="Court" selected="@(Model.Kind == TemporaryMovementKind.Court)">Adliye</option>
+        <option value="Other" selected="@(Model.Kind == TemporaryMovementKind.Other)">Diğer</option>
+    </select>
+    <label for="EventAt">Çıkış saati</label>
+    <input id="EventAt" name="EventAt" type="datetime-local" value="@Model.EventAt" required />
+    <label for="Destination">Gidilen yer</label>
+    <input id="Destination" name="Destination" value="@Model.Destination" required />
+    <label for="Reason">Gerekçe</label>
+    <input id="Reason" name="Reason" value="@Model.Reason" required />
+    <label for="Escort">Refakat</label>
+    <input id="Escort" name="Escort" value="@Model.Escort" />
+    <label for="ExpectedReturn">Beklenen dönüş (isteğe bağlı)</label>
+    <input id="ExpectedReturn" name="ExpectedReturn" type="datetime-local" value="@Model.ExpectedReturn" />
+    <label for="VehicleVisitId">Araç seferi (isteğe bağlı)</label>
+    <input id="VehicleVisitId" name="VehicleVisitId" value="@Model.VehicleVisitId" />
+    <label for="LateReason">Geç kayıt gerekçesi</label>
+    <input id="LateReason" name="LateReason" value="@Model.LateReason" />
+    <label for="AdditionalNote">Ek açıklama</label>
+    <textarea id="AdditionalNote" name="AdditionalNote">@Model.AdditionalNote</textarea>
+    @if (!string.IsNullOrWhiteSpace(Model.PreviewText))
+    {
+        <div class="preview">@Model.PreviewText</div>
+        <p class="muted">Metin kayıttan önce gösterilir ve serbestçe değiştirilemez. Ek açıklama ayrı durur.</p>
+        <button type="submit" name="step" value="kaydet">Kaydı yaz</button>
+    }
+    <div class="actions"><button type="submit" name="step" value="onizle">Metni oluştur</button></div>
+</form>

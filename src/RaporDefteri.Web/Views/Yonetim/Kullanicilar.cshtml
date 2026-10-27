@@ -1,0 +1,18 @@
+@model IReadOnlyList<UserAccountRow>
+@{ ViewData["Title"] = "Kullanıcılar"; }
+<h1>Kullanıcılar</h1>
+<p><a class="button" href="/yonetim/kullanicilar/yeni">Yeni kullanıcı</a> <a href="/yonetim/turler">Araç türleri</a></p>
+<table>
+    <thead><tr><th>Ad</th><th>Kullanıcı</th><th>Roller</th><th>Durum</th></tr></thead>
+    <tbody>
+    @foreach (var user in Model)
+    {
+        <tr>
+            <td><a href="/yonetim/kullanicilar/@user.Id">@user.DisplayName</a></td>
+            <td>@user.UserName</td>
+            <td>@string.Join(", ", user.Roles)</td>
+            <td>@(user.IsActive ? "Aktif" : "Pasif")</td>
+        </tr>
+    }
+    </tbody>
+</table>

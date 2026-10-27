@@ -1,0 +1,23 @@
+@model IReadOnlyList<InmateRow>
+@{ ViewData["Title"] = "Hükümlü/tutuklu"; var query = ViewData["Query"] as string; }
+<h1>Hükümlü/tutuklu</h1>
+<form method="get" class="card">
+    <label for="q">Ad soyad, sicil veya koğuş</label>
+    <input id="q" name="q" value="@query" autofocus />
+    <div class="actions"><button type="submit">Ara</button> <a class="button secondary" href="/kisiler/yeni">Yeni kabul</a></div>
+</form>
+<table>
+    <thead><tr><th>Sicil</th><th>Ad soyad</th><th>Koğuş/oda</th><th>Durum</th></tr></thead>
+    <tbody>
+    @foreach (var row in Model)
+    {
+        <tr>
+            <td><a href="/kisiler/@row.Id">@row.FileNumber</a></td>
+            <td>@row.FullName</td>
+            <td>@row.Ward</td>
+            <td>@row.Presence</td>
+        </tr>
+    }
+    </tbody>
+</table>
+<p class="muted">Aynı ad soyad ayrı kartlardır. Arama bunları birleştirmez.</p>

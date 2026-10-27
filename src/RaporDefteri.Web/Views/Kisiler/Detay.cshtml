@@ -1,0 +1,63 @@
+@model Inmate
+@inject RaporDefteri.Application.IInstitutionClock Clock
+@{ ViewData["Title"] = Model.FullName; var history = (IReadOnlyList<HistoryRow>)ViewData["History"]!; }
+<h1>@Model.FileNumber · @Model.FullName</h1>
+<p>Aktif kalış: @(Model.ActiveCustody() is null ? "yok" : Model.ActiveCustody()!.Ward ?? "koğuş yazılmamış")</p>
+<p class="actions">
+    <a class="button" href="/hareket/cikis?kisi=@Model.Id">Bu kişiyi çıkışa ekle</a>
+    @if (Model.ActiveCustody() is null)
+    {
+        <a class="button secondary" href="/kisiler/yeni">Yeniden kabul için yeni kayıt açın ve sicili yazın</a>
+    }
+    <a href="/raporlar/kisi/@Model.Id">Hareket dökümü</a>
+</p>
+@if (Model.ActiveCustody() is not null && (User.IsInRole(AppRoles.Operator) || User.IsInRole(AppRoles.ShiftSupervisor)))
+{
+    <form method="post" action="/kisiler/@Model.Id/tahliye" class="card">
+        <h2>Tahliye</h2>
+        <input type="hidden" name="idempotencyKey" value="@Guid.NewGuid().ToString("N")" />
+        <label>Olay saati <input type="datetime-local" name="eventAt" value="@FormTime.Input(Clock)" /></label>
+        <label>Gerekçe <input name="reason" /></label>
+        <button type="submit">Tahliye kaydı</button>
+    </form>
+    <form method="post" action="/kisiler/@Model.Id/sevk" class="card">
+        <h2>Kalıcı sevk</h2>
+        <input type="hidden" name="idempotencyKey" value="@Guid.NewGuid().ToString("N")" />
+        <label>Olay saati <input type="datetime-local" name="eventAt" value="@FormTime.Input(Clock)" /></label>
+        <label>Kurum <input name="destination" required /></label>
+        <label>Gerekçe <input name="reason" /></label>
+        <button type="submit">Sevk kaydı</button>
+    </form>
+}
+<form method="get" class="card">
+    <label for="from">Başlangıç</label>
+    <input id="from" type="date" name="from" value="@ViewData["From"]" />
+    <label for="to">Bitiş</label>
+    <input id="to" type="date" name="to" value="@ViewData["To"]" />
+    <label for="kind">Hareket türü</label>
+    <input id="kind" name="kind" value="@ViewData["Kind"]" />
+    <label for="destination">Gidilen yer</label>
+    <input id="destination" name="destination" value="@ViewData["Destination"]" />
+    <div class="actions"><button type="submit">Süz</button></div>
+</form>
+<table>
+    <thead><tr><th>Olay</th><th>Tür</th><th>Yer</th><th>Metin</th></tr></thead>
+    <tbody>
+    @foreach (var row in history)
+    {
+        <tr>
+            <td>@Clock.Format(row.EventAt)</td>
+            <td>@row.Kind</td>
+            <td>@row.Destination</td>
+            <td>@if (row.ReportEntryId is Guid id) { <a href="/defter/@id">@row.Text</a> } else { @row.Text }</td>
+        </tr>
+    }
+    </tbody>
+</table>
+<h2>Kalış dönemleri</h2>
+<ul>
+@foreach (var period in Model.CustodyPeriods.OrderBy(period => period.StartedAt))
+{
+    <li>@Clock.Format(period.StartedAt) – @(period.EndedAt is null ? "devam" : Clock.Format(period.EndedAt.Value)) · @Labels.Custody(period.Status) · @period.Ward</li>
+}
+</ul>

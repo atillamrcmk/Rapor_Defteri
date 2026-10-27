@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <ItemGroup>
+    <ProjectReference Include="..\RaporDefteri.Application\RaporDefteri.Application.csproj" />
+    <ProjectReference Include="..\RaporDefteri.Infrastructure\RaporDefteri.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>rapor-defteri-dev</UserSecretsId>
+  </PropertyGroup>
+
+</Project>

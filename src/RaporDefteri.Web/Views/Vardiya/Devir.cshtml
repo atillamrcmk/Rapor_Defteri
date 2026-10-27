@@ -1,0 +1,60 @@
+@model HandoverModel?
+@inject RaporDefteri.Application.IInstitutionClock Clock
+@{ ViewData["Title"] = "Devir"; }
+<h1>Vardiya devri</h1>
+@if (Model is null)
+{
+    <p>Devredilecek açık vardiya yok.</p>
+}
+else
+{
+    <p>@Clock.Format(Model.Shift.StartsAt) – @Clock.Format(Model.Shift.EndsAt) · @Model.Shift.StatusText</p>
+    <p class="muted">Devralma, işlemi yapan hesabı ve sunucu saatini kaydeder. Nitelikli elektronik imza değildir. Açık hareketler vardiya kapandığı için kapanmaz.</p>
+    <section class="card">
+        <h2>Henüz dönmeyen kişiler</h2>
+        <ul>
+        @foreach (var person in Model.OpenPeople)
+        {
+            <li>@person.FileNumber @person.FullName · @person.KindText · @person.Destination · @person.WatchText</li>
+        }
+        </ul>
+    </section>
+    <section class="card">
+        <h2>Açık araç seferleri</h2>
+        <ul>
+        @foreach (var vehicle in Model.OpenVehicles)
+        {
+            <li>@vehicle.Plate · @vehicle.InferenceText · @vehicle.Purpose</li>
+        }
+        </ul>
+    </section>
+    <section class="card">
+        <h2>Takibi süren olaylar</h2>
+        <ul>
+        @foreach (var item in Model.FollowUps)
+        {
+            <li><a href="/defter/@item.Id">@item.RecordNumber</a> @item.Text</li>
+        }
+        </ul>
+        <h2>Aktarılacak notlar</h2>
+        <ul>
+        @foreach (var note in Model.Notes)
+        {
+            <li>@note.Text</li>
+        }
+        </ul>
+    </section>
+    @if (User.IsInRole(AppRoles.ShiftSupervisor))
+    {
+        <form method="post" action="/vardiya/hazirla" class="card">
+            <label for="note">Devir açıklaması</label>
+            <textarea id="note" name="note"></textarea>
+            <div class="actions"><button type="submit">Devre hazırla</button></div>
+        </form>
+        <form method="post" action="/vardiya/devral" class="card">
+            <label for="closeNote">Devralma notu</label>
+            <textarea id="closeNote" name="closeNote"></textarea>
+            <div class="actions"><button type="submit">Devral ve kapat</button></div>
+        </form>
+    }
+}

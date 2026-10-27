@@ -1,0 +1,45 @@
+@model SimpleInput
+@{ ViewData["Title"] = Labels.Entry(Model.Type); }
+<h1>@Labels.Entry(Model.Type)</h1>
+<partial name="_Errors" />
+<form method="post" class="card">
+    <input type="hidden" name="IdempotencyKey" value="@Model.IdempotencyKey" />
+    <label for="EventAt">Olay saati</label>
+    <input id="EventAt" name="EventAt" type="datetime-local" value="@Model.EventAt" required />
+    <label for="Title">@(Model.Type == ReportEntryType.MaterialDelivery ? "Malzeme" : Model.Type == ReportEntryType.HandoverNote ? "Not" : "Ad veya başlık")</label>
+    <input id="Title" name="Title" value="@Model.Title" required />
+    @if (Model.Type != ReportEntryType.HandoverNote)
+    {
+        <label for="Body">Açıklama veya amaç</label>
+        <textarea id="Body" name="Body">@Model.Body</textarea>
+    }
+    @if (Model.Type == ReportEntryType.Visitor)
+    {
+        <label for="Organization">Birim/kurum</label>
+        <input id="Organization" name="Organization" value="@Model.Organization" />
+    }
+    @if (Model.Type == ReportEntryType.MaterialDelivery)
+    {
+        <label for="MaterialDirection">Yön</label>
+        <select id="MaterialDirection" name="MaterialDirection">
+            <option value="Received">Teslim alma</option>
+            <option value="Delivered">Teslim etme</option>
+        </select>
+        <label for="Counterparty">Karşı taraf</label>
+        <input id="Counterparty" name="Counterparty" value="@Model.Counterparty" />
+    }
+    @if (Model.Type == ReportEntryType.GeneralEvent)
+    {
+        <label><input type="checkbox" name="FollowUp" value="true" @(Model.FollowUp ? "checked" : null) /> Takibi sürsün</label>
+    }
+    <label for="LateReason">Geç kayıt gerekçesi</label>
+    <input id="LateReason" name="LateReason" value="@Model.LateReason" />
+    <label for="AdditionalNote">Ek açıklama</label>
+    <textarea id="AdditionalNote" name="AdditionalNote">@Model.AdditionalNote</textarea>
+    @if (!string.IsNullOrWhiteSpace(Model.PreviewText))
+    {
+        <div class="preview">@Model.PreviewText</div>
+        <button type="submit" name="step" value="kaydet">Kaydı yaz</button>
+    }
+    <div class="actions"><button type="submit" name="step" value="onizle">Metni oluştur</button></div>
+</form>

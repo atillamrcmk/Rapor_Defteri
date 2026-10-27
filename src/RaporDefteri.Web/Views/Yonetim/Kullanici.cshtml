@@ -1,0 +1,29 @@
+@model UserInput
+@{ ViewData["Title"] = "Kullanıcı"; var roles = new[] { AppRoles.Operator, AppRoles.ShiftSupervisor, AppRoles.Administrator, AppRoles.ReadOnly }; }
+<h1>@(Model.Id is null ? "Yeni kullanıcı" : "Kullanıcı")</h1>
+<partial name="_Errors" />
+<form method="post" class="card" autocomplete="off">
+    @if (Model.Id is null)
+    {
+        <label for="UserName">Kullanıcı adı</label>
+        <input id="UserName" name="UserName" value="@Model.UserName" required />
+    }
+    else
+    {
+        <p>@Model.UserName</p>
+    }
+    <label for="DisplayName">Görünen ad</label>
+    <input id="DisplayName" name="DisplayName" value="@Model.DisplayName" required />
+    <label for="Password">@(Model.Id is null ? "Parola" : "Yeni parola (boşsa değişmez)")</label>
+    <input id="Password" name="Password" type="password" />
+    <label><input type="checkbox" name="IsActive" value="true" @(Model.IsActive ? "checked" : null) /> Aktif</label>
+    <fieldset>
+        <legend>Roller</legend>
+        @foreach (var role in roles)
+        {
+            <label><input type="checkbox" name="Roles" value="@role" @(Model.Roles.Contains(role) ? "checked" : null) /> @role</label>
+        }
+    </fieldset>
+    <p class="muted">Yönetici rolü, eski rapor satırını iz bırakmadan değiştirme yetkisi vermez.</p>
+    <div class="actions"><button type="submit">Kaydet</button></div>
+</form>

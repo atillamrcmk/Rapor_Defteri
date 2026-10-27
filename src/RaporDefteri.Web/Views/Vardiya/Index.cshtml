@@ -1,0 +1,28 @@
+@model IReadOnlyList<ShiftSummary>
+@inject RaporDefteri.Application.IInstitutionClock Clock
+@{ ViewData["Title"] = "Vardiya"; var active = ViewData["Active"] as ShiftSummary; }
+<h1>Vardiya</h1>
+@if (active is null)
+{
+    <p>Açık vardiya yok.</p>
+}
+else
+{
+    <p>@Clock.Format(active.StartsAt) – @Clock.Format(active.EndsAt) · @active.StatusText</p>
+    <p><a href="/vardiya/devir">Devir ekranı</a></p>
+}
+<p><a class="button" href="/vardiya/ac">Vardiya aç</a></p>
+<table>
+    <thead><tr><th>Başlangıç</th><th>Bitiş</th><th>Durum</th><th>Görevliler</th></tr></thead>
+    <tbody>
+    @foreach (var shift in Model)
+    {
+        <tr>
+            <td>@Clock.Format(shift.StartsAt)</td>
+            <td>@Clock.Format(shift.EndsAt)</td>
+            <td>@shift.StatusText</td>
+            <td>@string.Join(", ", shift.DutyNames) · <a href="/raporlar/vardiya/@shift.Id?kapanis=@(shift.Status == ShiftStatus.Closed ? "true" : "false")">Rapor</a></td>
+        </tr>
+    }
+    </tbody>
+</table>

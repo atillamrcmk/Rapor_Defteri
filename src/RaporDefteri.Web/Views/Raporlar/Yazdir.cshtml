@@ -1,0 +1,54 @@
+@model PrintDocument
+@inject RaporDefteri.Application.IInstitutionClock Clock
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <title>@Model.Title</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+    <main>
+        <p class="no-print"><a href="/raporlar">Raporlara dön</a> <button type="button" onclick="window.print()">Yazdır veya PDF kaydet</button></p>
+        <article class="sheet">
+            <header class="sheet-head">
+                <div>@Model.Institution</div>
+                <h1>@Model.Title</h1>
+                <div>@Model.Period</div>
+                @if (!string.IsNullOrWhiteSpace(Model.Version))
+                {
+                    <div>Sürüm: @Model.Version</div>
+                }
+                <div class="muted">Çıktı saati: @Clock.Format(Model.GeneratedAt). Bu çıktı nitelikli elektronik imza değildir.</div>
+            </header>
+            <table>
+                <thead>
+                    <tr><th>Kayıt no</th><th>Olay saati</th><th>Açıklama</th><th>Durum</th></tr>
+                </thead>
+                <tbody>
+                @foreach (var row in Model.Rows)
+                {
+                    <tr>
+                        <td>@row.RecordNumber</td>
+                        <td>@row.EventTime @if (!string.IsNullOrWhiteSpace(row.RecordedTime)) { <div class="muted">Kayıt: @row.RecordedTime</div> }</td>
+                        <td>@row.Text @if (!string.IsNullOrWhiteSpace(row.Note)) { <div class="muted">Ek açıklama: @row.Note</div> }</td>
+                        <td>@row.Status</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+            @if (!string.IsNullOrWhiteSpace(Model.Handover))
+            {
+                <p><strong>Devir notu:</strong> @Model.Handover</p>
+            }
+            <section class="sign">
+                <div>Devreden: @Model.HandedOverBy</div>
+                <div>Devralan: @Model.AcceptedBy</div>
+            </section>
+        </article>
+    </main>
+</body>
+</html>

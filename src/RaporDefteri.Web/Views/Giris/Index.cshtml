@@ -1,0 +1,12 @@
+@model GirisInput
+@{ ViewData["Title"] = "Giriş"; }
+<h1>Giriş</h1>
+<partial name="_Errors" />
+<form method="post" class="card" autocomplete="off">
+    <label for="UserName">Kullanıcı adı</label>
+    <input id="UserName" name="UserName" value="@Model?.UserName" autofocus />
+    <label for="Password">Parola</label>
+    <input id="Password" name="Password" type="password" />
+    <div class="actions"><button type="submit">Giriş yap</button></div>
+</form>
+<p class="muted">İlk kurulum için henüz kullanıcı yoksa <a href="/kurulum">kurulum</a> ekranı kullanılır.</p>

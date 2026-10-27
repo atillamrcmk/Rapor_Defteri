@@ -1,0 +1,29 @@
+@model AdmissionInput
+@{ ViewData["Title"] = "Kabul"; }
+<h1>Kuruma kabul</h1>
+<p class="muted">Aynı sicil kayıtlıysa yeni kart açılmaz. Yeniden kabul için kişi kartındaki bağlantıyı kullanın.</p>
+<partial name="_Errors" />
+<form method="post" class="card">
+    <input type="hidden" name="IdempotencyKey" value="@Model.IdempotencyKey" />
+    <input type="hidden" name="ExistingInmateId" value="@Model.ExistingInmateId" />
+    <label for="EventAt">Olay saati</label>
+    <input id="EventAt" name="EventAt" type="datetime-local" value="@Model.EventAt" required />
+    <label for="FileNumber">Sicil / dosya no</label>
+    <input id="FileNumber" name="FileNumber" value="@Model.FileNumber" required />
+    <label for="FirstName">Ad</label>
+    <input id="FirstName" name="FirstName" value="@Model.FirstName" required />
+    <label for="LastName">Soyad</label>
+    <input id="LastName" name="LastName" value="@Model.LastName" required />
+    <label for="Ward">Koğuş/oda</label>
+    <input id="Ward" name="Ward" value="@Model.Ward" />
+    <label for="LateReason">Geç kayıt gerekçesi</label>
+    <input id="LateReason" name="LateReason" value="@Model.LateReason" />
+    <label for="AdditionalNote">Ek açıklama</label>
+    <textarea id="AdditionalNote" name="AdditionalNote">@Model.AdditionalNote</textarea>
+    @if (!string.IsNullOrWhiteSpace(Model.PreviewText))
+    {
+        <div class="preview">@Model.PreviewText</div>
+        <button type="submit" name="step" value="kaydet">Kaydı yaz</button>
+    }
+    <div class="actions"><button type="submit" name="step" value="onizle">Metni oluştur</button></div>
+</form>

@@ -1,0 +1,52 @@
+@model EntryDetail
+@inject RaporDefteri.Application.IInstitutionClock Clock
+@{ ViewData["Title"] = Model.Entry.RecordNumber; }
+<h1>@Model.Entry.RecordNumber</h1>
+<p>@Model.TypeText · @Model.StatusText · Vardiya @Model.ShiftText</p>
+<p><strong>Olay:</strong> @Clock.Format(Model.Entry.EventAt)</p>
+<p><strong>Sisteme kayıt:</strong> @Clock.Format(Model.Entry.RecordedAt)</p>
+@if (!string.IsNullOrWhiteSpace(Model.Entry.LateEntryReason))
+{
+    <p><strong>Geç kayıt gerekçesi:</strong> @Model.Entry.LateEntryReason</p>
+}
+<div class="preview">@Model.Entry.ReportText</div>
+@if (Model.Entry.ReportText != Model.Entry.OriginalReportText)
+{
+    <p class="muted">İlk metin: @Model.Entry.OriginalReportText</p>
+}
+@if (!string.IsNullOrWhiteSpace(Model.Entry.AdditionalNote))
+{
+    <p><strong>Ek açıklama:</strong> @Model.Entry.AdditionalNote</p>
+}
+@if (!string.IsNullOrWhiteSpace(Model.Entry.CancellationReason))
+{
+    <p>İptal: @Model.Entry.CancellationReason · @Clock.Format(Model.Entry.CancelledAt ?? Model.Entry.RecordedAt)</p>
+}
+<h2>Kişiler</h2>
+<ul>
+@foreach (var person in Model.People)
+{
+    <li><a href="/kisiler/@person.Id">@person.FileNumber @person.FullName</a> @person.Ward</li>
+}
+</ul>
+<h2>Düzeltme geçmişi</h2>
+@if (Model.Entry.Revisions.Count == 0) { <p>Düzeltme yok.</p> }
+<ul>
+@foreach (var revision in Model.Entry.Revisions.OrderBy(item => item.RevisedAt))
+{
+    <li>@Clock.Format(revision.RevisedAt) · @revision.Reason<br />Eski: @revision.OldReportText<br />Yeni: @revision.NewReportText</li>
+}
+</ul>
+@if (Model.CanCorrect)
+{
+    <p><a class="button" href="/defter/@Model.Entry.Id/duzelt">Düzelt</a></p>
+}
+@if (Model.CanCancel)
+{
+    <form method="post" action="/defter/@Model.Entry.Id/iptal" class="card">
+        <input type="hidden" name="token" value="@Model.Token" />
+        <label for="reason">İptal gerekçesi</label>
+        <input id="reason" name="reason" required />
+        <div class="actions"><button type="submit">İptal et</button></div>
+    </form>
+}

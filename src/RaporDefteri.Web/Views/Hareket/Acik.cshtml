@@ -1,0 +1,22 @@
+@model IReadOnlyList<OpenPersonRow>
+@inject RaporDefteri.Application.IInstitutionClock Clock
+@{ ViewData["Title"] = "Açık hareketler"; }
+<h1>Açık kişi hareketleri</h1>
+<p><a class="button" href="/hareket/donus">Dönüş kaydı</a></p>
+<table>
+    <thead><tr><th>Sicil</th><th>Ad</th><th>Koğuş</th><th>Tür</th><th>Yer</th><th>Çıkış</th><th>İzleme</th></tr></thead>
+    <tbody>
+    @foreach (var row in Model)
+    {
+        <tr>
+            <td><a href="/kisiler/@row.InmateId">@row.FileNumber</a></td>
+            <td>@row.FullName</td>
+            <td>@row.Ward</td>
+            <td>@row.KindText</td>
+            <td>@row.Destination</td>
+            <td>@Clock.Format(row.DepartedAt)</td>
+            <td>@row.WatchText</td>
+        </tr>
+    }
+    </tbody>
+</table>

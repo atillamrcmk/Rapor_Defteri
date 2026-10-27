@@ -1,0 +1,30 @@
+@model IReadOnlyList<VehicleType>
+@{ ViewData["Title"] = "Araç türleri"; }
+<h1>Araç türleri</h1>
+@if (TempData["Error"] is string error) { <div class="banner">@error</div> }
+<table>
+    <thead><tr><th>Ad</th><th>Sıra</th><th>Durum</th><th></th></tr></thead>
+    <tbody>
+    @foreach (var type in Model)
+    {
+        <tr>
+            <td colspan="4">
+                <form method="post">
+                    <input type="hidden" name="id" value="@type.Id" />
+                    <input name="name" value="@type.Name" />
+                    <input name="sort" type="number" value="@type.SortOrder" />
+                    <label><input type="checkbox" name="active" value="true" @(type.IsActive ? "checked" : null) /> Aktif</label>
+                    <button type="submit">Güncelle</button>
+                </form>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+<form method="post" class="card">
+    <h2>Yeni tür</h2>
+    <input name="name" placeholder="Tür adı" required />
+    <input name="sort" type="number" value="10" />
+    <input type="hidden" name="active" value="true" />
+    <div class="actions"><button type="submit">Ekle</button></div>
+</form>

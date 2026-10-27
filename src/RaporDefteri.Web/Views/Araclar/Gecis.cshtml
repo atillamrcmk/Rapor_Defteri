@@ -1,0 +1,45 @@
+@model VehicleInput
+@{ ViewData["Title"] = "Araç geçişi"; var types = (IReadOnlyList<VehicleType>)ViewData["Types"]!; }
+<h1>Araç geçişi</h1>
+<partial name="_Errors" />
+<form method="post" class="card">
+    <input type="hidden" name="IdempotencyKey" value="@Model.IdempotencyKey" />
+    <label for="Plate">Plaka</label>
+    <input id="Plate" name="Plate" value="@Model.Plate" required />
+    <label for="VehicleTypeId">Araç türü</label>
+    <select id="VehicleTypeId" name="VehicleTypeId">
+        @foreach (var type in types)
+        {
+            <option value="@type.Id" selected="@(Model.VehicleTypeId == type.Id)">@type.Name</option>
+        }
+    </select>
+    <label for="Location">Konum sınıfı</label>
+    <select id="Location" name="Location">
+        <option value="Unspecified">Konum bilinmiyor</option>
+        <option value="External">Dışarıdan gelen</option>
+        <option value="Institution">Kurumda bulunan</option>
+    </select>
+    <label for="Direction">Yön</label>
+    <select id="Direction" name="Direction">
+        <option value="Entry">Giriş</option>
+        <option value="Exit">Çıkış</option>
+    </select>
+    <label for="EventAt">Olay saati</label>
+    <input id="EventAt" name="EventAt" type="datetime-local" value="@Model.EventAt" required />
+    <label for="Purpose">Amaç</label>
+    <input id="Purpose" name="Purpose" value="@Model.Purpose" required />
+    <label for="Driver">Sürücü</label>
+    <input id="Driver" name="Driver" value="@Model.Driver" />
+    <label for="Organization">Kurum/firma</label>
+    <input id="Organization" name="Organization" value="@Model.Organization" />
+    <label for="LateReason">Geç kayıt gerekçesi</label>
+    <input id="LateReason" name="LateReason" value="@Model.LateReason" />
+    <label for="AdditionalNote">Ek açıklama</label>
+    <textarea id="AdditionalNote" name="AdditionalNote">@Model.AdditionalNote</textarea>
+    @if (!string.IsNullOrWhiteSpace(Model.PreviewText))
+    {
+        <div class="preview">@Model.PreviewText</div>
+        <button type="submit" name="step" value="kaydet">Kaydı yaz</button>
+    }
+    <div class="actions"><button type="submit" name="step" value="onizle">Metni oluştur</button></div>
+</form>

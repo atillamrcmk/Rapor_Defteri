@@ -1,0 +1,26 @@
+@inject RaporDefteri.Application.IInstitutionClock Clock
+@{ ViewData["Title"] = "Raporlar"; var shifts = (IReadOnlyList<ShiftSummary>)ViewData["Shifts"]!; var today = DateOnly.FromDateTime(Clock.ToLocal(Clock.UtcNow)); }
+<h1>Raporlar</h1>
+<form class="card" method="get" action="/raporlar/gunluk">
+    <h2>Günlük merkez kontrol raporu</h2>
+    <input type="date" name="day" value="@today.ToString("yyyy-MM-dd")" />
+    <div class="actions"><button type="submit">Göster</button></div>
+</form>
+<form class="card" method="get" action="/raporlar/vardiya">
+    <h2>Vardiya raporu</h2>
+    @foreach (var shift in shifts.Take(8))
+    {
+        <p><a href="/raporlar/vardiya/@shift.Id?kapanis=@(shift.Status == ShiftStatus.Closed ? "true" : "false")">@Clock.Format(shift.StartsAt) – @Clock.Format(shift.EndsAt) · @shift.StatusText</a></p>
+    }
+</form>
+<form class="card" method="get" action="/raporlar/arac">
+    <h2>Plaka dökümü</h2>
+    <input name="plaka" placeholder="Plaka" />
+    <div class="actions"><button type="submit">Göster</button></div>
+</form>
+<form class="card" method="get" action="/raporlar/aralik">
+    <h2>Tarih aralığı</h2>
+    <input type="date" name="from" value="@today.ToString("yyyy-MM-dd")" />
+    <input type="date" name="to" value="@today.ToString("yyyy-MM-dd")" />
+    <div class="actions"><button type="submit">Listele</button></div>
+</form>

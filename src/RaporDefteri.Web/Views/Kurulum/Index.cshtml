@@ -1,0 +1,15 @@
+@model KurulumInput
+@{ ViewData["Title"] = "İlk kurulum"; }
+<h1>İlk yönetici</h1>
+<p>Bu ekran yalnızca hiç kullanıcı yokken açılır. Parola kaynak kodunda tutulmaz.</p>
+<partial name="_Errors" />
+<form method="post" class="card" autocomplete="off">
+    <label for="UserName">Kullanıcı adı</label>
+    <input id="UserName" name="UserName" value="@Model.UserName" required />
+    <label for="DisplayName">Görünen ad</label>
+    <input id="DisplayName" name="DisplayName" value="@Model.DisplayName" required />
+    <label for="Password">Parola</label>
+    <input id="Password" name="Password" type="password" required />
+    <p class="muted">En az 10 karakter, büyük harf, küçük harf, rakam ve simge.</p>
+    <div class="actions"><button type="submit">Yöneticiyi oluştur</button></div>
+</form>

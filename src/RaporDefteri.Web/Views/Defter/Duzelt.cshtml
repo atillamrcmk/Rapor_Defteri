@@ -1,0 +1,20 @@
+@model CorrectInput
+@{ ViewData["Title"] = "Düzeltme"; }
+<h1>Gerekçeli düzeltme</h1>
+<p class="muted">İlk rapor metni silinmez. Kapanmış vardiyada bunu yalnızca vardiya sorumlusu yapabilir.</p>
+<partial name="_Errors" />
+<form method="post" class="card">
+    <input type="hidden" name="EntryId" value="@Model.EntryId" />
+    <input type="hidden" name="Token" value="@Model.Token" />
+    <label for="EventAt">Olay saati</label>
+    <input id="EventAt" name="EventAt" type="datetime-local" value="@Model.EventAt" required />
+    <label for="Primary">Gidilen yer veya başlık</label>
+    <input id="Primary" name="Primary" value="@Model.Primary" />
+    <label for="Secondary">Gerekçe</label>
+    <input id="Secondary" name="Secondary" value="@Model.Secondary" />
+    <label for="AdditionalNote">Ek açıklama</label>
+    <textarea id="AdditionalNote" name="AdditionalNote">@Model.AdditionalNote</textarea>
+    <label for="Reason">Düzeltme gerekçesi</label>
+    <input id="Reason" name="Reason" value="@Model.Reason" required />
+    <div class="actions"><button type="submit">Düzeltmeyi kaydet</button></div>
+</form>

@@ -1,0 +1,54 @@
+@model Page<LedgerRow>
+@inject RaporDefteri.Application.IInstitutionClock Clock
+@{ ViewData["Title"] = "Rapor defteri"; var shifts = (IReadOnlyList<ShiftSummary>)ViewData["Shifts"]!; }
+<h1>Rapor defteri</h1>
+<form method="get" class="card">
+    <label for="from">Olay başlangıcı</label>
+    <input id="from" type="date" name="from" value="@ViewData["From"]" />
+    <label for="to">Olay bitişi</label>
+    <input id="to" type="date" name="to" value="@ViewData["To"]" />
+    <label for="type">Tür</label>
+    <select id="type" name="type">
+        <option value="">Tümü</option>
+        @foreach (var type in Enum.GetValues<ReportEntryType>())
+        {
+            <option value="@type" selected="@(ViewData["Type"] as ReportEntryType? == type)">@Labels.Entry(type)</option>
+        }
+    </select>
+    <label for="shiftId">Vardiya</label>
+    <select id="shiftId" name="shiftId">
+        <option value="">Tümü</option>
+        @foreach (var shift in shifts)
+        {
+            <option value="@shift.Id">@Clock.Format(shift.StartsAt)</option>
+        }
+    </select>
+    <label for="number">Kayıt no</label>
+    <input id="number" name="number" value="@ViewData["Number"]" />
+    <div class="actions"><button type="submit">Süz</button></div>
+</form>
+<table>
+    <thead><tr><th>No</th><th>Olay</th><th>Kayıt</th><th>Tür</th><th>Durum</th><th>Metin</th></tr></thead>
+    <tbody>
+    @foreach (var row in Model.Items)
+    {
+        <tr>
+            <td><a href="/defter/@row.Id">@row.RecordNumber</a></td>
+            <td>@Clock.Format(row.EventAt)</td>
+            <td>@Clock.Format(row.RecordedAt)</td>
+            <td>@row.TypeText</td>
+            <td>@row.StatusText</td>
+            <td>@row.Text</td>
+        </tr>
+    }
+    </tbody>
+</table>
+<p class="muted">Sayfa @Model.PageNumber / @Model.PageCount · @Model.TotalCount kayıt</p>
+@if (Model.PageNumber > 1)
+{
+    <a href="?page=@(Model.PageNumber - 1)">Önceki</a>
+}
+@if (Model.PageNumber < Model.PageCount)
+{
+    <a href="?page=@(Model.PageNumber + 1)">Sonraki</a>
+}

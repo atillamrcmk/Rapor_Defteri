@@ -1,0 +1,81 @@
+﻿@model DashboardModel
+@inject RaporDefteri.Application.IInstitutionClock Clock
+@{ ViewData["Title"] = "Ana sayfa"; }
+<h1>Ana sayfa</h1>
+<section class="grid">
+    <article class="card">
+        <h2>Aktif vardiya</h2>
+        @if (Model.Shift is null)
+        {
+            <p>Açık vardiya yok.</p>
+            <a class="button" href="/vardiya/ac">Vardiya aç</a>
+        }
+        else
+        {
+            <p>@Clock.Format(Model.Shift.StartsAt) – @Clock.Format(Model.Shift.EndsAt)</p>
+            <p>@Model.Shift.StatusText</p>
+            <p>@string.Join(", ", Model.Shift.DutyNames)</p>
+            <a href="/vardiya/devir">Devir ekranı</a>
+        }
+    </article>
+    <article class="card">
+        <h2>Hızlı kayıt</h2>
+        <div class="actions">
+            <a class="button" href="/hareket/cikis">Hastane / çıkış</a>
+            <a class="button" href="/hareket/donus">Dönüş</a>
+            <a class="button" href="/araclar/gecis">Araç geçişi</a>
+            <a class="button secondary" href="/kayit/olay">Genel olay</a>
+        </div>
+    </article>
+    <article class="card">
+        <h2>Son doğrulanmış yedek</h2>
+        @if (Model.Backup is null)
+        {
+            <p>Doğrulanmış yedek bilgisi yok. Dosyanın diskte durması yeterli sayılmaz.</p>
+        }
+        else
+        {
+            <p>@Clock.Format(Model.Backup.VerifiedAt)</p>
+            <p class="muted">@Model.Backup.FileName · @Model.Backup.SizeBytes bayt</p>
+        }
+    </article>
+</section>
+<section class="grid">
+    <article class="card">
+        <h2>Dönüş beklenen kişiler</h2>
+        @if (Model.OpenPeople.Count == 0) { <p>Açık kişi hareketi yok.</p> }
+        <ul>
+            @foreach (var person in Model.OpenPeople)
+            {
+                <li>@person.FileNumber @person.FullName · @person.Destination · @person.WatchText</li>
+            }
+        </ul>
+    </article>
+    <article class="card">
+        <h2>Açık araç seferleri</h2>
+        @if (Model.OpenVehicles.Count == 0) { <p>Çıkış veya dönüş bekleyen sefer yok.</p> }
+        <ul>
+            @foreach (var vehicle in Model.OpenVehicles)
+            {
+                <li>@vehicle.Plate · @vehicle.TypeName · @vehicle.InferenceText</li>
+            }
+        </ul>
+    </article>
+</section>
+<section class="table-wrap">
+    <h2>Son kayıtlar</h2>
+    <table>
+        <thead><tr><th>No</th><th>Olay</th><th>Tür</th><th>Metin</th></tr></thead>
+        <tbody>
+        @foreach (var row in Model.Recent)
+        {
+            <tr>
+                <td><a href="/defter/@row.Id">@row.RecordNumber</a></td>
+                <td>@Clock.Format(row.EventAt)</td>
+                <td>@row.TypeText</td>
+                <td>@row.Text</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</section>

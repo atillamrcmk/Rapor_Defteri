@@ -1,0 +1,49 @@
+﻿@inject RaporDefteri.Application.IInstitutionProfile Institution
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] — Merkez Kontrol Rapor Defteri</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+    <header class="top">
+        <div class="brand">Merkez Kontrol Rapor Defteri<small>@Institution.Name · @Institution.UnitName</small></div>
+        @if (User.Identity?.IsAuthenticated == true)
+        {
+            <form method="post" action="/cikis">
+                <span>@User.Identity.Name</span>
+                <button class="linkish" type="submit">Çıkış</button>
+            </form>
+        }
+    </header>
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        <nav>
+            <a href="/">Ana sayfa</a>
+            <a href="/defter">Rapor defteri</a>
+            <a href="/hareket/cikis">Çıkış kaydı</a>
+            <a href="/hareket/acik">Açık hareketler</a>
+            <a href="/kisiler">Hükümlü/tutuklu</a>
+            <a href="/araclar">Araçlar</a>
+            <a href="/vardiya">Vardiya</a>
+            <a href="/raporlar">Raporlar</a>
+            <a href="/yonetim/denetim">Denetim</a>
+            @if (User.IsInRole(AppRoles.Administrator))
+            {
+                <a href="/yonetim/kullanicilar">Kullanıcılar</a>
+                <a href="/yonetim/turler">Araç türleri</a>
+            }
+        </nav>
+    }
+    <main>
+        @if (TempData["Error"] is string error)
+        {
+            <div class="banner">@error</div>
+        }
+        @RenderBody()
+    </main>
+    <script src="~/js/site.js"></script>
+</body>
+</html>

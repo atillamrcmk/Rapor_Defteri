@@ -1,0 +1,38 @@
+@model ReturnInput
+@inject RaporDefteri.Application.IInstitutionClock Clock
+@{ ViewData["Title"] = "Dönüş"; var open = (IReadOnlyList<OpenPersonRow>)ViewData["Open"]!; }
+<h1>Dönüş kaydı</h1>
+<p class="muted">Yalnızca işaretlenen kişiler kapanır. Dönüş aracı gidiş aracıyla aynı olmak zorunda değildir.</p>
+<partial name="_Errors" />
+<form method="post" class="card">
+    <input type="hidden" name="IdempotencyKey" value="@Model.IdempotencyKey" />
+    <table>
+        <thead><tr><th></th><th>Kişi</th><th>Yer</th><th>Çıkış</th><th>İzleme</th></tr></thead>
+        <tbody>
+        @foreach (var row in open)
+        {
+            <tr>
+                <td><input type="checkbox" name="AbsenceIds" value="@row.AbsenceId" aria-label="@row.FileNumber @row.FullName" @(Model.AbsenceIds.Contains(row.AbsenceId) ? "checked" : null) /></td>
+                <td>@row.FileNumber @row.FullName</td>
+                <td>@row.KindText · @row.Destination</td>
+                <td>@Clock.Format(row.DepartedAt)</td>
+                <td>@row.WatchText</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+    <label for="EventAt">Dönüş saati</label>
+    <input id="EventAt" name="EventAt" type="datetime-local" value="@Model.EventAt" required />
+    <label for="VehicleVisitId">Dönüş aracı (isteğe bağlı)</label>
+    <input id="VehicleVisitId" name="VehicleVisitId" value="@Model.VehicleVisitId" />
+    <label for="LateReason">Geç kayıt gerekçesi</label>
+    <input id="LateReason" name="LateReason" value="@Model.LateReason" />
+    <label for="AdditionalNote">Ek açıklama</label>
+    <textarea id="AdditionalNote" name="AdditionalNote">@Model.AdditionalNote</textarea>
+    @if (!string.IsNullOrWhiteSpace(Model.PreviewText))
+    {
+        <div class="preview">@Model.PreviewText</div>
+        <button type="submit" name="step" value="kaydet">Dönüşü yaz</button>
+    }
+    <div class="actions"><button type="submit" name="step" value="onizle">Metni oluştur</button></div>
+</form>

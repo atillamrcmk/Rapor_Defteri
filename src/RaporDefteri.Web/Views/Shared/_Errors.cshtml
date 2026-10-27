@@ -1,0 +1,9 @@
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="errors" role="alert">
+        @foreach (var error in ViewData.ModelState.Values.SelectMany(item => item.Errors))
+        {
+            <div>@error.ErrorMessage</div>
+        }
+    </div>
+}

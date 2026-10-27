@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/RaporDefteri.Application/RaporDefteri.Application.csproj" />
+    <Project Path="src/RaporDefteri.Domain/RaporDefteri.Domain.csproj" />
+    <Project Path="src/RaporDefteri.Infrastructure/RaporDefteri.Infrastructure.csproj" />
+    <Project Path="src/RaporDefteri.Web/RaporDefteri.Web.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/RaporDefteri.Tests/RaporDefteri.Tests.csproj" />
+  </Folder>
+</Solution>

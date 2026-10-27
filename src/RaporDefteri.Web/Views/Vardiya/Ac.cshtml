@@ -1,0 +1,20 @@
+@model OpenShiftInput
+@inject RaporDefteri.Application.IInstitutionClock Clock
+@{ ViewData["Title"] = "Vardiya aç"; var users = (IReadOnlyList<UserPick>)ViewData["Users"]!; }
+<h1>Vardiya aç</h1>
+<p class="muted">Bitiş ertesi güne geçebilir. Saatler önceki kayıttan kopyalanmaz.</p>
+<partial name="_Errors" />
+<form method="post" class="card">
+    <label for="StartsAt">Başlangıç</label>
+    <input id="StartsAt" name="StartsAt" type="datetime-local" value="@Model.StartsAt" required />
+    <label for="EndsAt">Bitiş</label>
+    <input id="EndsAt" name="EndsAt" type="datetime-local" value="@Model.EndsAt" required />
+    <fieldset>
+        <legend>Görevliler</legend>
+        @foreach (var user in users)
+        {
+            <label><input type="checkbox" name="DutyUserIds" value="@user.Id" /> @user.DisplayName (@user.UserName)</label>
+        }
+    </fieldset>
+    <div class="actions"><button type="submit">Vardiyayı aç</button></div>
+</form>

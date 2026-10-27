@@ -1,0 +1,20 @@
+@model IReadOnlyList<AuditRow>
+@inject RaporDefteri.Application.IInstitutionClock Clock
+@{ ViewData["Title"] = "Denetim"; }
+<h1>Denetim kayıtları</h1>
+<p class="muted">Bu liste uygulamadan düzenlenemez. Veritabanı yöneticisine karşı mutlak değiştirilemezlik iddiası yoktur.</p>
+<table>
+    <thead><tr><th>Zaman</th><th>Kullanıcı</th><th>İşlem</th><th>Kayıt</th><th>Ayrıntı</th></tr></thead>
+    <tbody>
+    @foreach (var row in Model)
+    {
+        <tr>
+            <td>@Clock.Format(row.At)</td>
+            <td>@row.UserName</td>
+            <td>@row.Action</td>
+            <td>@row.EntityName @row.EntityId</td>
+            <td>@row.Details</td>
+        </tr>
+    }
+    </tbody>
+</table>

@@ -1,0 +1,37 @@
+@model IReadOnlyList<VehicleVisitRow>
+@inject RaporDefteri.Application.IInstitutionClock Clock
+@{ ViewData["Title"] = "Araçlar"; var open = (IReadOnlyList<OpenVehicleRow>)ViewData["Open"]!; }
+<h1>Araçlar</h1>
+<p><a class="button" href="/araclar/gecis">Geçiş kaydı</a></p>
+<section class="card">
+    <h2>Açık seferler</h2>
+    <ul>
+    @foreach (var row in open)
+    {
+        <li>@row.Plate · @row.TypeName · @row.InferenceText · @Clock.Format(row.StartedAt)</li>
+    }
+    </ul>
+    <p class="muted">Konumu belirsiz araçlar bu listede görünmez.</p>
+</section>
+<form method="get" class="card">
+    <label for="plaka">Plaka</label>
+    <input id="plaka" name="plaka" value="@ViewData["Plate"]" />
+    <div class="actions"><button type="submit">Geçmişi getir</button></div>
+</form>
+<table>
+    <thead><tr><th>Kayıt</th><th>Plaka</th><th>Tür</th><th>Durum</th><th>Başlangıç</th><th>Bitiş</th><th>Amaç</th></tr></thead>
+    <tbody>
+    @foreach (var row in Model)
+    {
+        <tr>
+            <td>@row.RecordNumber</td>
+            <td>@row.Plate</td>
+            <td>@row.TypeName</td>
+            <td>@row.StatusText · @row.InferenceText</td>
+            <td>@Clock.Format(row.StartedAt)</td>
+            <td>@(row.EndedAt is null ? "" : Clock.Format(row.EndedAt.Value))</td>
+            <td>@row.Purpose</td>
+        </tr>
+    }
+    </tbody>
+</table>
